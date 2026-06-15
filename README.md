@@ -68,7 +68,7 @@ mv mapped_reads_sorted_rRNA_operon.sam SAM_files/
 
 ## 2.4 Normalizing and plotting the mapped reads
 
-Finally, the mapped reads on be visualized with the following Python script.
+Finally, the mapped reads can be visualized with the following Python script.
 
 The parameters for which region to visualize are hard-coded at the start. 
 These parameters are currently set for the example rRNA operon region.
