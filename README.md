@@ -40,7 +40,7 @@ bowtie2 -x Genomes/Cdiff_index \
 samtools view -c -F 4 mapped_reads.bam
 
 # Keep note of this number for later in the pipeline.
-
+```
 ## 2.3 Sort and index aligned reads (BAM processing)
 
 After alignment, the resulting BAM file is not yet ordered in genomic coordinate space. Sorting is required so that reads are arranged by their mapping position along the reference genome. This is necessary for efficient querying and visualization.
