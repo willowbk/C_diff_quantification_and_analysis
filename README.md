@@ -24,7 +24,7 @@ cd Genomes
 
 # Build bowtie2 index
 bowtie2-build DMG2301622_Cdiff.fna Cdiff_index
-
+```
 ## 2.2 Align reads to the reference genome (FASTQ → BAM)
 
 After building the reference genome index, sequencing reads are aligned to the genome using `bowtie2`. The input consists of paired-end FASTQ files, and the output is a SAM file that is then converted into BAM format for efficient processing.
