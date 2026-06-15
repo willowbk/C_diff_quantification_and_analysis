@@ -36,6 +36,11 @@ bowtie2 -x Genomes/Cdiff_index \
         -2 fastq/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_2.fq.gz \
         | samtools view -bS - > mapped_reads.bam
 
+# To get the total number of maps reads for normalization, run
+samtools view -c -F 4 mapped_reads.bam
+
+# Keep note of this number for later in the pipeline.
+
 ## 2.3 Sort and index aligned reads (BAM processing)
 
 After alignment, the resulting BAM file is not yet ordered in genomic coordinate space. Sorting is required so that reads are arranged by their mapping position along the reference genome. This is necessary for efficient querying and visualization.
@@ -43,13 +48,15 @@ After alignment, the resulting BAM file is not yet ordered in genomic coordinate
 Once sorted, the BAM file is indexed to enable fast access to specific genomic regions.
 
 ```bash
-# Sort BAM file by genomic coordinates
+# Sort the BAM file by genomic coordinates
 samtools sort -o mapped_reads_sorted.bam mapped_reads.bam
 
-# Index the sorted BAM file (creates .bai index file)
+# Index the sorted BAM file
 samtools index mapped_reads_sorted.bam
 
-# Once this is done, you can extract reads which map to specific loci ()
-samtools view -h -o mapped_reads_sorted_16000_21500.sam mapped_reads_sorted.bam CP010905.2:16000-21500
+# Once this is done, you can extract reads which map to specific loci (the example region corresponds to an rRNA operon)
+samtools view -h -o mapped_reads_sorted_rRNA_operon.sam \
+    mapped_reads_sorted.bam \
+    "gnl|Prokka|CdiffT6_1:2971000-2977000"
 
 

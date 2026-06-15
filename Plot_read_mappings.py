@@ -7,33 +7,31 @@ mpl.rc('font',family='sans serif')
 import matplotlib.patches as mpatches
 import numpy as np
 
-folder_name = '/media/willow/MyPassport/Faber/2025-06-10_Janet_Wackenreuter_25046PR/FASTQ_by_lib/'
+folder_name = 'fastq/'
 
-
-locs = [[16116, 17606], [17667, 17742], [18120, 21015], [21145, 21260]]
+# Hard-coded entries for rRNA locus
+locs = [[2971432, 2971537], [2971674, 2974567], [2974834, 2976333], [2976529, 2977107]]
 loc = [locs[0][0], locs[-1][1]]
-tag = 'Pool9_Pilot_rRNA'
-genes = ['16S rRNA', 'tRNA-Ala', '23S rRNA', '5S rRNA']
-colors = [(.5, .5, 1), (.75, .75, .75), (1, .5, .5), (.5, .25, .5)]
-pre_file = 'PlateIII_2_Pool9new_out_'
-post_file = '_sorted_16000_21500.sam'
-strands = ['+', '+', '+', '+']
+genes = ['5S rRNA', '16S rRNA', '23S rRNA', 'cysG_1']
+colors = [(.5, .25, .5), (.5, .5, 1), (1, .5, .5), (.75, .75, .75)]
+strands = ['-', '-', '-', '-']
 length = loc[1] - loc[0]
 extend = 500
-lib_sizes = [36174138]
-#PlateIII_2_Pool9new_out_None_sorted_16000_21500.bam
+
+
+tag = 'A10_METRO_E1_rRNA_locus_2971000_2977000'# only for figure naming
+file_name = 'mapped_reads_sorted_rRNA_operon.sam'
+lib_sizes = [18038030]# Obtained previously via samtools
+
 
 max_read_ratio = 0
 reads_1_for = np.zeros(length + 2*extend)
 reads_1_rev = np.zeros(length + 2*extend)
 
-term = 'None'
-
-file_name = pre_file + term + post_file
 in_file = open(folder_name + file_name, 'r')
 lines = in_file.readlines() 
 in_file.close()
-print(term)
+
 i = 0
 for line in lines:
 	if not line[0] == '@':
@@ -45,51 +43,13 @@ for line in lines:
 		elif strand == '-':
 			reads_1_rev = reads_1_rev + 10**6 * np.array([int(i - extend >= pos - loc[0])*int(i - extend < pos - loc[0] + len(line_split[9])) for i in range(len(reads_1_rev))]) / lib_sizes[i]
 
-folder_name = '/media/willow/MyPassport/Faber/2024-12-13_Janet_Wackenreuter_24195PR_raw_FASTQ/FASTQ_by_lib/'
-
-locs = [[16116, 17606], [17667, 17742], [18120, 21015], [21145, 21260]]
-loc = [locs[0][0], locs[-1][1]]
-genes = ['16S rRNA', 'tRNA-Ala', '23S rRNA', '5S rRNA']
-colors = [(.5, .5, 1), (.75, .75, .75), (1, .5, .5), (.5, .25, .5)]
-pre_file = 'Pool1_RNAtagseq_'
-post_file = '_16000_21500.sam'
-strands = ['+', '+', '+', '+']
-length = loc[1] - loc[0]
-extend = 500
-lib_sizes = [5446362]
-
-max_read_ratio = 0
-reads_2_for = np.zeros(length + 2*extend)
-reads_2_rev = np.zeros(length + 2*extend)
-
-term = 'AATAATGTT'
-
-file_name = pre_file + term + post_file
-in_file = open(folder_name + file_name, 'r')
-lines = in_file.readlines() 
-in_file.close()
-print(term)
-i = 0
-for line in lines:
-	if not line[0] == '@':
-		line_split = line.split()
-		strand = '+'*int(line_split[1] == '16') + '-'*int(line_split[1] == '0')
-		pos = int(line_split[3])
-		if strand == '+':
-			reads_2_for = reads_2_for + 10**6 * np.array([int(i - extend >= pos - loc[0])*int(i - extend < pos - loc[0] + len(line_split[9])) for i in range(len(reads_2_for))]) / lib_sizes[i]
-		elif strand == '-':
-			reads_2_rev = reads_2_rev + 10**6 * np.array([int(i - extend >= pos - loc[0])*int(i - extend < pos - loc[0] + len(line_split[9])) for i in range(len(reads_2_rev))]) / lib_sizes[i]
-
 fig = plt.figure(figsize=(3.5, 2.5))
 
-handle1 = plt.bar([i-extend for i in range(len(reads_1_for))], reads_1_for, width=1, linewidth = 0, color= 'lightblue', alpha = .5, label='Pool 9, forward')
-handle2 = plt.bar([i-extend for i in range(len(reads_1_rev))], -reads_1_rev, width=1, linewidth = 0, color= (1, .5, 1), alpha = .5, label='Pool 9, reverse')
-handle3 = plt.bar([i-extend for i in range(len(reads_2_for))], reads_2_for, width=1, linewidth = 0, color= 'blue', alpha = .5, label='Pilot AATAATGTT, forward')
-handle4 = plt.bar([i-extend for i in range(len(reads_2_rev))], -reads_2_rev, width=1, linewidth = 0, color= (1, 0, 1), alpha = .5, label='Pilot AATAATGTT, reverse')
+handle1 = plt.bar([i-extend for i in range(len(reads_1_for))], reads_1_for, width=1, linewidth = 0, color= 'lightblue', alpha = .5, label='Forward')
+handle2 = plt.bar([i-extend for i in range(len(reads_1_rev))], -reads_1_rev, width=1, linewidth = 0, color= (1, .5, 1), alpha = .5, label='Reverse')
 
-
-track_pos = -.4*max(list(reads_1_for) + list(reads_1_for)) - max(list(reads_2_rev) + list(reads_1_rev))
-track_height = .15*max(list(reads_1_for) + list(reads_2_for))
+track_pos = -.4*max(list(reads_1_for)) - max(list(reads_1_rev))
+track_height = .15*max(list(reads_1_for))
 
 for i,gene in enumerate(genes):
 	gene_len = locs[i][1] - locs[i][0]
@@ -105,7 +65,7 @@ for i,gene in enumerate(genes):
 
 plt.axhline(0, 0, 1, linestyle = 'solid', lw = .5, color = 'black')
 plt.xticks(fontsize = 6)
-#yticks = sorted([-i for i in range(5) if i < max(read_ratio_rev)]) + [i for i in range(1, 5) if i < max(read_ratio_for)]
+
 plt.yticks(fontsize = 6)
 plt.axhline(track_pos + .5*track_height, 0, 1, lw = 1, linestyle = (0, (1, 1)), color = 'darkgrey', clip_on = False)
 plt.axhline(track_pos + .5*track_height, 0.035, .965, lw = 1, color = 'black', clip_on = False)
@@ -114,17 +74,14 @@ ax = plt.gca()
 ax.spines[['right', 'top', 'bottom']].set_visible(False)
 ax.tick_params(right=False)
 ax.tick_params(top=False)
-#ax.tick_params(left=False)
-#ax.tick_params(labelleft=False)
+
 ax.tick_params(labelbottom=False)
 ax.tick_params(bottom=False)
-#plt.xlabel('Read position (bps)', fontsize = 6)
+
 plt.ylabel('Read coverage', fontsize = 8)
-#ax.add_artist(mpatches.Rectangle((0, -.3), length, .5, ec="none", fc = (1, .75, .75), alpha = 1, clip_on=False))
-#ax.add_artist(mpatches.Rectangle((0, -.4), length, 0.1, ec="none", fc = (1, .5, .5), alpha = 1, clip_on=False, zorder=3))
 
 plt.xlim([-extend, length + extend])
-plt.ylim([-1.05*max(list(reads_1_rev) + list(reads_2_rev)), 1.05*max(list(reads_1_for) + list(reads_2_for))])
+plt.ylim([-1.05*max(list(reads_1_rev)), 1.05*max(list(reads_1_for))])
 #plt.set_axis_off()
 plt.tight_layout()
 plt.savefig('Figure_read_coverage_'+tag+'.pdf',dpi = 350)
