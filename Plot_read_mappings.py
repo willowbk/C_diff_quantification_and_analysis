@@ -7,7 +7,7 @@ mpl.rc('font',family='sans serif')
 import matplotlib.patches as mpatches
 import numpy as np
 
-folder_name = 'fastq/'
+folder_name = 'SAM_files/'
 
 # Hard-coded entries for rRNA locus
 locs = [[2971432, 2971537], [2971674, 2974567], [2974834, 2976333], [2976529, 2977107]]
@@ -23,25 +23,40 @@ tag = 'A10_METRO_E1_rRNA_locus_2971000_2977000'# only for figure naming
 file_name = 'mapped_reads_sorted_rRNA_operon.sam'
 lib_sizes = [18038030]# Obtained previously via samtools
 
-
-max_read_ratio = 0
 reads_1_for = np.zeros(length + 2*extend)
 reads_1_rev = np.zeros(length + 2*extend)
 
-in_file = open(folder_name + file_name, 'r')
-lines = in_file.readlines() 
-in_file.close()
+with open(folder_name + file_name, "r") as f:
 
-i = 0
-for line in lines:
-	if not line[0] == '@':
-		line_split = line.split()
-		strand = '+'*int(line_split[1] == '16') + '-'*int(line_split[1] == '0')
-		pos = int(line_split[3])
-		if strand == '+':
-			reads_1_for = reads_1_for + 10**6 * np.array([int(i - extend >= pos - loc[0])*int(i - extend < pos - loc[0] + len(line_split[9])) for i in range(len(reads_1_for))]) / lib_sizes[i]
-		elif strand == '-':
-			reads_1_rev = reads_1_rev + 10**6 * np.array([int(i - extend >= pos - loc[0])*int(i - extend < pos - loc[0] + len(line_split[9])) for i in range(len(reads_1_rev))]) / lib_sizes[i]
+	for line in f:
+
+		if line[0] == "@":
+			continue
+
+		cols = line.split("\t")
+
+		chrom = cols[2]
+		if chrom != "gnl|Prokka|CdiffT6_1":
+			continue
+
+		flag = int(cols[1])
+		pos = int(cols[3]) - 1   # SAM is 1-based → convert to 0-based
+		read_len = len(cols[9])
+
+		# filter to region of interest
+		if pos < loc[0] or pos > loc[0] + length:
+			continue
+
+		scale = 1e6 / lib_sizes[0]
+
+		start_i = max(0, pos - loc[0] - extend)
+		end_i = min(len(reads_1_for), pos - loc[0] + read_len + extend)
+
+		if flag & 16:
+			reads_1_rev[start_i:end_i] += scale
+		else:
+			reads_1_for[start_i:end_i] += scale
+
 
 fig = plt.figure(figsize=(3.5, 2.5))
 
@@ -69,7 +84,7 @@ plt.xticks(fontsize = 6)
 plt.yticks(fontsize = 6)
 plt.axhline(track_pos + .5*track_height, 0, 1, lw = 1, linestyle = (0, (1, 1)), color = 'darkgrey', clip_on = False)
 plt.axhline(track_pos + .5*track_height, 0.035, .965, lw = 1, color = 'black', clip_on = False)
-plt.legend(handles=[handle1, handle2, handle3, handle4], loc = 'best', fontsize = 4)
+plt.legend(handles=[handle1, handle2], loc = 'best', fontsize = 4)
 ax = plt.gca()
 ax.spines[['right', 'top', 'bottom']].set_visible(False)
 ax.tick_params(right=False)

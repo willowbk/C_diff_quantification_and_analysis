@@ -43,7 +43,7 @@ samtools view -c -F 4 mapped_reads.bam
 ```
 ## 2.3 Sort and index aligned reads (BAM processing)
 
-After alignment, the resulting BAM file is not yet ordered in genomic coordinate space. Sorting is required so that reads are arranged by their mapping position along the reference genome. This is necessary for efficient querying and visualization.
+Sorting is required so that reads are arranged by their mapping position along the reference genome.
 
 Once sorted, the BAM file is indexed to enable fast access to specific genomic regions.
 
@@ -59,4 +59,20 @@ samtools view -h -o mapped_reads_sorted_rRNA_operon.sam \
     mapped_reads_sorted.bam \
     "gnl|Prokka|CdiffT6_1:2971000-2977000"
 
+# Then move this final SAM file to the SAM_files folder
+mv mapped_reads_sorted_rRNA_operon.sam SAM_files/
+
+# It is also recommended to delete the previously created BAM files, as these can take up a lot of space.
+
+```
+
+## 2.4 Normalizing and plotting the mapped reads
+
+Finally, the mapped reads on be visualized with the following Python script.
+
+The parameters for which region to visualize are hard-coded at the start. 
+These parameters are currently set for the example rRNA operon region.
+
+```bash
+python Plot_read_mappings.py
 
