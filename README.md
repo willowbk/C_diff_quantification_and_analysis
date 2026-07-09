@@ -36,7 +36,7 @@ bowtie2 -x Genomes/Cdiff_index \
         -2 fastq/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_2.fq.gz \
         | samtools view -bS - > mapped_reads.bam
 
-# To get the total number of maps reads for normalization, run
+# To get the total number of mapped reads for normalization, run
 samtools view -c -F 4 mapped_reads.bam
 
 # Keep note of this number for later in the pipeline.
@@ -53,6 +53,30 @@ samtools sort -o mapped_reads_sorted.bam mapped_reads.bam
 
 # Index the sorted BAM file
 samtools index mapped_reads_sorted.bam
+
+# At this point, you can also generate a bigWig file to view in a genomebrowser,
+
+bamCoverage \
+    -b mapped_reads_sorted.bam \
+    -o coverage.bw \
+    --normalizeUsing CPM
+    --binSize 1
+
+# or for separate forward / reverse tracks:
+
+bamCoverage \
+    -b mapped_reads_sorted.bam \
+    -o coverage_forward.bw \
+    --normalizeUsing CPM \
+    --filterRNAstrand forward \
+    --binSize 1
+
+bamCoverage \
+    -b mapped_reads_sorted.bam \
+    -o coverage_reverse.bw \
+    --normalizeUsing CPM \
+    --filterRNAstrand reverse \
+    --binSize 1
 
 # Once this is done, you can extract reads which map to specific loci (the example region corresponds to an rRNA operon)
 samtools view -h -o mapped_reads_sorted_rRNA_operon.sam \
