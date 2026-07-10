@@ -57,7 +57,7 @@ samtools index mapped_reads_sorted.bam
 
 ## 2.4 Generate wiggle files for genome browser
 
-# At this point, you can also generate a wiggle file in bigWig format to view in a genomebrowser,
+At this point, you can also generate a wiggle file in bigWig format to view in a genomebrowser,
 ```bash
 bamCoverage \
     -b mapped_reads_sorted.bam \
@@ -102,7 +102,7 @@ bamCoverage \
 
 ## 2.5 Extract reads for a specific loci
 
-# Once this is done, you can extract reads which map to specific loci (the example region corresponds to an rRNA operon)
+Once this is done, you can extract reads which map to specific loci (the example region corresponds to an rRNA operon)
 
 ```bash
 samtools view -h -o mapped_reads_sorted_rRNA_operon.sam \
@@ -117,7 +117,7 @@ mv mapped_reads_sorted_rRNA_operon.sam SAM_files/
 
 ## 2.6 Extract unmapped reads for identification
 
-# In case a lot of reads did not map to the C. diff transcriptome, you can first extract these reads with bowtie
+In case a lot of reads did not map to the C. diff transcriptome, you can first extract these reads with bowtie
 ```bash
 bowtie2 \
     -x Genomes/Cdiff_index \
