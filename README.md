@@ -54,7 +54,7 @@ samtools sort -o mapped_reads_sorted.bam mapped_reads.bam
 # Index the sorted BAM file
 samtools index mapped_reads_sorted.bam
 
-# At this point, you can also generate a bigWig file to view in a genomebrowser,
+# At this point, you can also generate a wiggle file in bigWig format to view in a genomebrowser,
 
 bamCoverage \
     -b mapped_reads_sorted.bam \
@@ -74,6 +74,24 @@ bamCoverage \
 bamCoverage \
     -b mapped_reads_sorted.bam \
     -o coverage_reverse.bw \
+    --normalizeUsing CPM \
+    --filterRNAstrand reverse \
+    --binSize 1
+
+# For WIG instead (typically larger), simply use
+
+bamCoverage \
+    -b mapped_reads_sorted.bam \
+    -o coverage_forward.wig \
+    --outFileFormat wig \
+    --normalizeUsing CPM \
+    --filterRNAstrand forward \
+    --binSize 1
+
+bamCoverage \
+    -b mapped_reads_sorted.bam \
+    -o coverage_reverse.wig \
+    --outFileFormat wig \
     --normalizeUsing CPM \
     --filterRNAstrand reverse \
     --binSize 1
