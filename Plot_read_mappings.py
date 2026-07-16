@@ -32,7 +32,7 @@ with open(folder_name + file_name, "r") as f:
 
 		if line[0] == "@":
 			continue
-
+			
 		cols = line.split("\t")
 
 		chrom = cols[2]
@@ -51,11 +51,15 @@ with open(folder_name + file_name, "r") as f:
 
 		start_i = max(0, pos - loc[0] - extend)
 		end_i = min(len(reads_1_for), pos - loc[0] + read_len + extend)
+		
+		is_read1 = flag & 64
+		is_read2 = flag & 128
+		is_reverse = flag & 16
 
-		if flag & 16:
-			reads_1_rev[start_i:end_i] += scale
-		else:
+		if (is_read1 and not is_reverse) or (is_read2 and is_reverse):
 			reads_1_for[start_i:end_i] += scale
+		else:
+			reads_1_rev[start_i:end_i] += scale
 
 
 fig = plt.figure(figsize=(3.5, 2.5))
