@@ -30,7 +30,7 @@ bowtie2-build DMG2301622_Cdiff.fna Cdiff_index
 After building the reference genome index, sequencing reads are aligned to the genome using `bowtie2`. The input consists of paired-end FASTQ files, and the output is a SAM file that is then converted into BAM format for efficient processing.
 
 ```bash
-# Perform alignment using bowtie2
+# Perform alignment using bowtie2 (you might want to increase the CPUs used, depending on your hardware, e.g. "-p 10")
 bowtie2 -x Genomes/Cdiff_index \
         -1 fastq/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_1.fq.gz \
         -2 fastq/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_2.fq.gz \
