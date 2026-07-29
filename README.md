@@ -1,5 +1,7 @@
 # C. difficile Bulk RNA-seq Analysis Pipeline
 
+*This repository contains the software implementation developed by the author. It is currently under active development.*
+
 This repository contains a Python-based pipeline for the quantification and downstream analysis of bulk RNA-seq data from *Clostridioides difficile* T6 strain.
 
 ---
