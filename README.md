@@ -198,7 +198,7 @@ Once the script has finished, a file with the suffix _count_table.csv will be ge
 
 The following script will produce a table with each normalized library, a BCV plot (explanation below)
 and a table with the differential expression results. This code is currently set to perform differential expression
-between 3 replicates of H20 and METRO conditions. Change the group parameter to match the desired analysis.
+between 3 replicates of H20 and METRO conditions. To change this, update the group parameter.
 It is first necessary to install edgeR if not already installed. 
 To install edgeR, uncomment the first two lines at the start of the script before running in the terminal
 
