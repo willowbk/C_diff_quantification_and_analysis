@@ -169,9 +169,56 @@ Click the eye icon to view which reads mapped to which taxa and at each level.
 
 Finally, the mapped reads can be visualized with the following Python script.
 
+*WARNING: This script is hardcoded for the case of a stranded library*
+
 The parameters for which region to visualize are hard-coded at the start. 
 These parameters are currently set for the example rRNA operon region.
 
 ```bash
 python Plot_read_mappings.py
+```
+
+## 3 Differential expression 
+
+## 3.1 Assemble the count table
+
+The next step is to assemble the count matrix. The following Python script will automatically search for
+all quantified results in the quants folder and assemble them into a single count table. Before running the
+script, it's first necessary to edit the dictionary file_to_conds at the start of the script 
+so that a human-readable label is provided for each experimental condition corresponding to each abstract file name. 
+If even a single file is found without an entry in this dictionary, the script will report the names of these files and terminate.
+
+```bash
+python Generate_count_table.py
+```
+
+Once the script has finished, a file with the suffix _count_table.csv will be generated in the main directory.
+
+## 3.2 Quality control, normalization, and differential expression
+
+The following script will produce a table with each normalized library, a BCV plot (explanation below)
+and a table with the differential expression results. This code is currently set to perform differential expression
+between 3 replicates of H20 and METRO conditions. Change the group parameter to match the desired analysis.
+It is first necessary to install edgeR if not already installed. 
+To install edgeR, uncomment the first two lines at the start of the script before running in the terminal
+
+```bash
+Rscript Diff_expr_analysis.R
+```
+
+Installing edgeR should take some time, but when the code completes successfully, both tables and a .pdf should be produced in the 
+main folder. As a quality control step, first open the .pdf to view the BCV plot.
+
+The BCV (coefficient of variation) plot displays the estimated biological variation between replicates across different expression levels. 
+The BCV value represents the expected relative difference in expression between replicates for genes with similar expression levels. 
+For example, a BCV of 0.2 means that biological replicates typically differ by about 20% for a given gene.
+
+The blue line shows the average variability estimated for genes at each expression level. 
+The red line shows the overall variability estimated across all genes and serves as a baseline. 
+Because lowly expressed genes have fewer sequencing counts and therefore more uncertainty, 
+higher BCV values at low expression levels are expected. 
+A typical BCV plot shows decreasing variability with increasing expression. 
+Values around 0.2–0.3 are generally considered reasonable for biological replicates, 
+whereas consistently high values (>0.5) or strong deviations of the blue line from the red line may indicate poor reproducibility or increased biological variation.
+
 

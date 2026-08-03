@@ -13,6 +13,7 @@ feature_list = ['CDS', 'tRNA', 'tmRNA', 'rRNA', 'repeat_region']
 # Collect all feature types found in record
 gene_types = []
 new_genes = []
+none_entry_index = 0
 
 print('Reading GenBank file...')
 records = SeqIO.parse(folder_name_genbank, "genbank")
@@ -32,7 +33,8 @@ for i,record in enumerate(list(records)):
 			if 'locus_tag' in feature.qualifiers:
 				locus_tag = feature.qualifiers['locus_tag'][0]
 			else:
-				locus_tag = 'None'
+				locus_tag = 'None_' + str(none_entry_index)
+				none_entry_index += 1
 			
 			if 'gene' in feature.qualifiers:
 				gene_name = feature.qualifiers['gene'][0]
