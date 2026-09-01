@@ -221,4 +221,16 @@ A typical BCV plot shows decreasing variability with increasing expression.
 Values around 0.2–0.3 are generally considered reasonable for biological replicates, 
 whereas consistently high values (>0.5) or strong deviations of the blue line from the red line may indicate poor reproducibility or increased biological variation.
 
+## 3.3 Plotting the differential expression results
+
+To then plot the differential expression results between single pairs of conditions, run the following Python script, with the name of the differential 
+expression file from the last step specified at the top of the file.
+
+```bash
+python Plot_differential_expr.py
+```
+
+This will produce a pdf with a volcano plot for the specified conditions. Also, the top 10 differentially expressed genes will be displayed for 
+both positive and negative differential expression.
+
 
