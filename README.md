@@ -180,25 +180,88 @@ python Plot_read_mappings.py
 
 ## 3 Differential expression 
 
-## 3.1 Assemble the count table
+## 3.1 Assemble the count table & biotype breakdown
 
 The next step is to assemble the count matrix. The following Python script will automatically search for
 all quantified results in the quants folder and assemble them into a single count table. Before running the
 script, it's first necessary to edit the dictionary file_to_conds at the start of the script 
 so that a human-readable label is provided for each experimental condition corresponding to each abstract file name. 
 If even a single file is found without an entry in this dictionary, the script will report the names of these files and terminate.
+The script will also generate a pdf figure showing the per-biotype quantified reads precentages. Which biotypes will appear in this
+figure, and also separately which will appear in the final count table, are both specified at the start of the script.
 
 ```bash
 python Generate_count_table.py
 ```
 
-Once the script has finished, a file with the suffix _count_table.csv will be generated in the main directory.
+Once the script has finished, a file with the suffix _count_table.csv will be generated in the main directory, 
+as well as a breakdown of the percentages of mapped reads corresponding to each biotype (_biotype_composition.pdf).
 
-## 3.2 Quality control, normalization, and differential expression
+## 3.2 Quantification quality control and normalization
 
-The following script will produce a table with each normalized library, a BCV plot (explanation below)
+Next to further examine the quality of the quantification results, we turn to TMM (Trimmed Mean of M-values) normalization.
+TMM normalization is used to make expression levels comparable between RNA-seq samples by correcting for differences in sequencing depth and relative RNA composition. 
+After normalization, samples from biological replicates should show similar overall expression distributions, while biological differences between conditions can remain. 
+The following script will produce a table with each TMM normalized library as a CSV file based on the count table generated in the previous step (file name specified at the top of the script),
+
+```bash
+Rscript Normalize_counts.R
+```
+
+This table can be inspected manually, however, the following Python script will also produce several quality control figures to assess the normalization. 
+This script assumes that replicates will be designated with " Rep.#" or " rep.#", and so samples must be labeled according
+to that convention:
+
+```bash
+python Plot_qauntification_QC_figures.py
+```
+
+All figures will be generated in a folder with the suffix _QC_figures (automatically generated).
+
+The first figure (_RLE.pdf) shows an RLE (Relative Log Expression) plot. In this figure, the normalized counts for each gene are subtracted by the median expression across all samples, 
+so the resulting distributions represent each sample’s deviation from the typical expression level. 
+Ideally, the distributions are centered around 0 and have similar spreads across samples. 
+A sample whose entire distribution is substantially shifted above or below 0 has a systematic expression difference relative to the others, 
+while a much wider distribution indicates unusually large gene-by-gene deviations. 
+Individual extreme genes are not necessarily concerning, but a sample with a distinctly different overall distribution warrants investigation.
+
+The next figure (Correlation_matrix_...) displays the Pearson correlation coefficient for all pairs of samples on the normalized log CPMs. 
+While it is expected that replicates will often have a higher correlation, and poor correlation between replicates can indicate technical problems, 
+there is also often high correlation between samples representing similar conditions since only minor transcriptomic changes are expected 
+(note the scale on the colorbar when evaluating this figure). 
+
+A folder with scatterplots representing all pair-wise correlations between replicates is also generated at the same time as the correlation matrix. 
+The top genes which deviate from the diagonal will also be labeled these figures, the number of which is indicated at the top of the script by n_labels.
+A threshold is also set for this labeling (logCPM_threshold), since lowly-expressed genes tend to show greater per-sample deviation, such that
+only genes with expression about this shreshold will be labeled. To guide the user, horizontal and vertical dashed, grey lines are shown to indicate
+the threshold.
+
+The next figure (_PCA.pdf) shows a principal component analysis (PCA) of the normalized expression data. 
+PCA reduces the high-dimensional gene expression data to a small number of dimensions that capture the largest sources of variation between samples. 
+The first two principal components are plotted, allowing samples with similar overall expression profiles to appear close together. 
+Replicates are generally expected to cluster together, while samples representing different conditions may separate from one another depending on the magnitude of their transcriptomic differences. 
+Unexpected clustering, isolated samples, or separation according to factors unrelated to the experimental conditions may indicate technical variation, 
+batch effects, or other sources of systematic variation.
+
+The final figure (_MDS_all_conditions.pdf) shows a multidimensional scaling (MDS) analysis of the normalized expression data. Like PCA, 
+MDS provides a low-dimensional visualization of the similarity between samples, 
+but it does so by first calculating the pair-wise distances between samples and then finding a two-dimensional arrangement that preserves these distances as closely as possible. 
+Samples with similar overall expression profiles should therefore cluster together, while samples with substantially different profiles should be separated. 
+Biological replicates are generally expected to cluster closely, while different conditions may separate depending on the magnitude of their transcriptomic differences. 
+Isolated samples or unexpected clustering patterns may indicate technical problems, batch effects, or other sources of systematic variation.
+
+Both PCA and MDS are included because they provide complementary views of the overall structure of the dataset. 
+PCA identifies the major axes of variation directly from the expression matrix, whereas MDS focuses on preserving the relative distances between samples. 
+If both methods reveal similar clustering patterns, this provides stronger evidence that the observed sample relationships are robust features of the dataset 
+rather than artifacts of a particular dimensionality-reduction method.
+
+
+## 3.3 Differential expression
+
+The next step is to perform differential expression analysis between pairs of conditions using the R library edgeR.
+The following script will perform this computation, produce a BCV plot (explanation below)
 and a table with the differential expression results. This code is currently set to perform differential expression
-between 3 replicates of H20 and METRO conditions. To change this, update the group parameter.
+between 3 replicates of "Water control early" and "Metronidazol early" conditions. To change this, update the group parameter.
 It is first necessary to install edgeR if not already installed. 
 To install edgeR, uncomment the first two lines at the start of the script before running in the terminal
 
@@ -206,8 +269,8 @@ To install edgeR, uncomment the first two lines at the start of the script befor
 Rscript Diff_expr_analysis.R
 ```
 
-Installing edgeR should take some time, but when the code completes successfully, both tables and a .pdf should be produced in the 
-main folder. As a quality control step, first open the .pdf to view the BCV plot.
+Installing edgeR should take some time, but when the code completes successfully, both tables and a PDF should be produced in the 
+main folder. As a quality control step, first open the PDF to view the BCV plot.
 
 The BCV (coefficient of variation) plot displays the estimated biological variation between replicates across different expression levels. 
 The BCV value represents the expected relative difference in expression between replicates for genes with similar expression levels. 
@@ -221,7 +284,7 @@ A typical BCV plot shows decreasing variability with increasing expression.
 Values around 0.2–0.3 are generally considered reasonable for biological replicates, 
 whereas consistently high values (>0.5) or strong deviations of the blue line from the red line may indicate poor reproducibility or increased biological variation.
 
-## 3.3 Plotting the differential expression results
+## 3.4 Plotting the differential expression results and quality control
 
 To then plot the differential expression results between single pairs of conditions, run the following Python script, with the name of the differential 
 expression file from the last step specified at the top of the file.
@@ -231,6 +294,18 @@ python Plot_differential_expr.py
 ```
 
 This will produce a pdf with a volcano plot for the specified conditions. Also, the top 10 differentially expressed genes will be displayed for 
-both positive and negative differential expression.
+both positive and negative differential expression. In addition, an MA and a p-value distribution plot is generated for quality control.
 
+The MA plot (mean versus average) shows how gene expression changes between two conditions as a function of the gene's overall expression level.
+It plots the average expression of each gene between the two conditions against its log₂ fold change, 
+allowing you to see both the magnitude and direction of expression changes across the range of expression levels. 
+Ideally, the points should be distributed fairly symmetrically around zero, with no obvious systematic trend in fold change as expression increases.
+A large spread at low expression is often expected because measurements of weakly expressed genes are noisier, 
+but a strong systematic shift or widening of the distribution as expression levels increase could indicate technical or normalization issues.
+
+The final figure (`_pvalue_distribution.pdf`) shows the distribution of p-values obtained from the differential expression analysis. 
+When there is little or no true differential expression, p-values are expected to be approximately uniformly distributed between 0 and 1. 
+When there are many genuinely differentially expressed genes, an excess of small p-values is expected, producing a distribution with a pronounced peak near zero. 
+An approximately uniform distribution at larger p-values together with an excess of small p-values is therefore generally consistent with a well-behaved differential expression analysis. 
+Strong deviations from these patterns, particularly an unexpected concentration of intermediate or large p-values, may warrant further investigation of the model, normalization, or experimental design.
 

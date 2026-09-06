@@ -1,0 +1,22 @@
+{
+    "read_files": "[ /mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A7_LL37_E1_ZKRN260013226-1A_23H7NJLT3_L6/A7_LL37_E1_ZKRN260013226-1A_23H7NJLT3_L6_1_out.fq.gz, /mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A7_LL37_E1_ZKRN260013226-1A_23H7NJLT3_L6/A7_LL37_E1_ZKRN260013226-1A_23H7NJLT3_L6_2_out.fq.gz]",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 5758054,
+    "num_assigned_fragments": 5758054,
+    "num_frags_with_concordant_consistent_mappings": 5385598,
+    "num_frags_with_inconsistent_or_orphan_mappings": 396407,
+    "strand_mapping_bias": 0.0008947353091715842,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 4823,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 5385598,
+    "SF": 176392,
+    "SR": 215192,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

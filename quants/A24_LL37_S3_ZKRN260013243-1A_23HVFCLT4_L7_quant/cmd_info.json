@@ -1,0 +1,11 @@
+{
+    "salmon_version": "1.10.3",
+    "index": "DMG2301622_Cdiff_index",
+    "libType": "A",
+    "mates1": "/mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A24_LL37_S3_ZKRN260013243-1A_23HVFCLT4_L7/A24_LL37_S3_ZKRN260013243-1A_23HVFCLT4_L7_1_out.fq.gz",
+    "mates2": "/mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A24_LL37_S3_ZKRN260013243-1A_23HVFCLT4_L7/A24_LL37_S3_ZKRN260013243-1A_23HVFCLT4_L7_2_out.fq.gz",
+    "threads": "4",
+    "validateMappings": [],
+    "output": "/mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/quants/A24_LL37_S3_ZKRN260013243-1A_23HVFCLT4_L7_quant",
+    "auxDir": "aux_info"
+}

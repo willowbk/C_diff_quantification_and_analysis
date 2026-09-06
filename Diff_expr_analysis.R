@@ -1,78 +1,54 @@
+library(edgeR)
 
-# Install once if needed:
-# BiocManager::install("edgeR")
-# install.packages("data.table")
+file_name <- "CdiffT6_all_conditions"
 
-library('edgeR')
+group <- factor(c(rep("H2O", 3), rep("METRO", 3)), levels=c("H2O", "METRO"))
+sample_patterns <- c(H2O="Water control early", METRO="Metronidazol early")
 
-file_name = 'CdiffT6_2_conditions'
-# Read count table
-df <- read.csv(paste0(file_name, "_count_table.csv"), header=TRUE, check.names=FALSE)
+df <- read.csv(paste0(file_name, "_count_table.csv"), header=TRUE, check.names=FALSE) # Read count table
 
-# Save annotation
-annotation <- df[, c("locus_tag", "gene_name", "type")]
+df_counts <- df[, !(colnames(df) %in% c("locus_tag", "gene_name", "type"))] # Extract count matrix
+rownames(df_counts) <- df$locus_tag # Use locus tags as row names
+Counts <- data.matrix(df_counts) # Convert to numeric matrix
 
-# Extract count matrix
-df_counts <- df[, !(colnames(df) %in% c("locus_tag", "gene_name", "type"))]
+selected_samples <- c()
+sample_groups <- c()
 
-# Use locus_tag as row names
-rownames(df_counts) <- df$locus_tag
+for (condition in levels(group)) {
+	pattern <- sample_patterns[condition]
+	samples <- colnames(Counts)[startsWith(tolower(colnames(Counts)), tolower(paste0(pattern, " ")))]
+	expected <- sum(group == condition)
 
+	if (length(samples) != expected) {
+		stop(paste0("Expected ", expected, " samples for ", condition, ", but found ", length(samples), " matching '", pattern, "'."))
+	}
 
-# Create normalized data table
-cpm_vals <- cpm(df_counts, log=TRUE, prior.count=1)
-write.csv(cpm_vals, file=paste0("NormLib", file_name, ".csv"))
+	selected_samples <- c(selected_samples, samples)
+	sample_groups <- c(sample_groups, rep(condition, length(samples)))
+}
 
+Counts <- Counts[, selected_samples, drop=FALSE] # Keep only selected samples
+sample_groups <- factor(sample_groups, levels=levels(group)) # Assign condition labels
 
-# Differential expression analysis
-Counts <- data.matrix(df_counts)
+y <- DGEList(counts=Counts, group=sample_groups) # Create DGEList
 
-# Define which conditions to perform differential expression
-group <- factor(c(rep("H2O",3), rep("METRO",3)))
-
-y <- DGEList(counts=Counts, group=group)
-
-# Filter low expression genes
-keep <- filterByExpr(y)
-
+keep <- filterByExpr(y) # Filter low-expression genes
 y <- y[keep,,keep.lib.sizes=FALSE]
 
+y <- normLibSizes(y) # TMM normalization
 
-# Normalize library sizes
-y <- normLibSizes(y)
+y <- estimateDisp(y) # Estimate dispersions
 
-
-# Estimate dispersions
-y <- estimateDisp(y)
-
-
-# BCV plot
-pdf(paste0(file_name, "_BCV_plot.pdf"))
+pdf(paste0(file_name, "_", levels(group)[2], "_vs_", levels(group)[1], "_BCV_plot.pdf")) # Save BCV plot
 plotBCV(y)
 dev.off()
 
-
-# Design matrix
-design <- model.matrix(~0+group)
+design <- model.matrix(~0+sample_groups) # Create design matrix
 colnames(design) <- levels(group)
 
+fit <- glmQLFit(y, design) # Fit model
+cont <- makeContrasts(contrasts=paste0(levels(group)[2], " - ", levels(group)[1]), levels=design) # Define contrast
+qlf <- glmQLFTest(fit, contrast=cont) # Differential expression test
+out <- topTags(qlf, n=Inf) # Extract all results
 
-# Fit model
-fit <- glmQLFit(y, design)
-
-
-# Contrast
-cont <- makeContrasts(METRO - H2O, levels=design)
-
-
-# Differential expression test
-qlf <- glmQLFTest(fit, contrast=cont)
-
-
-# Results
-out <- topTags(qlf, n=Inf)
-
-
-# Write results
-write.csv(out, file=paste0("DiffExpr", file_name, ".csv"))
-
+write.csv(out, file=paste0("DiffExpr", file_name, "_", levels(group)[2], "_vs_", levels(group)[1], ".csv")) # Write results

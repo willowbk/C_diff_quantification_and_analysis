@@ -1,0 +1,11 @@
+{
+    "salmon_version": "1.10.3",
+    "index": "DMG2301622_Cdiff_index/",
+    "libType": "A",
+    "mates1": "fastq/B_24h_BHI_2_ZKRN260013254-1A_23HVFCLT4_L7/B_24h_BHI_2_ZKRN260013254-1A_23HVFCLT4_L7_1_out.fq.gz",
+    "mates2": "fastq/B_24h_BHI_2_ZKRN260013254-1A_23HVFCLT4_L7/B_24h_BHI_2_ZKRN260013254-1A_23HVFCLT4_L7_2_out.fq.gz",
+    "threads": "4",
+    "validateMappings": [],
+    "output": "quants/B_24h_BHI_2_ZKRN260013254-1A_23HVFCLT4_L7_quant",
+    "auxDir": "aux_info"
+}

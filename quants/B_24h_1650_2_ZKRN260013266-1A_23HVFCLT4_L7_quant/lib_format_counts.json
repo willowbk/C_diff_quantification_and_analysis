@@ -1,0 +1,22 @@
+{
+    "read_files": "[ fastq/B_24h_1650_2_ZKRN260013266-1A_23HVFCLT4_L7/B_24h_1650_2_ZKRN260013266-1A_23HVFCLT4_L7_1_out.fq.gz, fastq/B_24h_1650_2_ZKRN260013266-1A_23HVFCLT4_L7/B_24h_1650_2_ZKRN260013266-1A_23HVFCLT4_L7_2_out.fq.gz]",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 4975938,
+    "num_assigned_fragments": 4975938,
+    "num_frags_with_concordant_consistent_mappings": 4573029,
+    "num_frags_with_inconsistent_or_orphan_mappings": 424662,
+    "strand_mapping_bias": 0.001192315017534173,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 5459,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 4573029,
+    "SF": 208822,
+    "SR": 210381,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

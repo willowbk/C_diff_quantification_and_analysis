@@ -1,0 +1,22 @@
+{
+    "read_files": "[ /mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A5_DMSO_E2_ZKRN260013224-1A_23H7NJLT3_L6/A5_DMSO_E2_ZKRN260013224-1A_23H7NJLT3_L6_1_out.fq.gz, /mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A5_DMSO_E2_ZKRN260013224-1A_23H7NJLT3_L6/A5_DMSO_E2_ZKRN260013224-1A_23H7NJLT3_L6_2_out.fq.gz]",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 6293589,
+    "num_assigned_fragments": 6293589,
+    "num_frags_with_concordant_consistent_mappings": 5874019,
+    "num_frags_with_inconsistent_or_orphan_mappings": 445430,
+    "strand_mapping_bias": 0.0008343363513459266,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 4905,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 5874019,
+    "SF": 205406,
+    "SR": 235119,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

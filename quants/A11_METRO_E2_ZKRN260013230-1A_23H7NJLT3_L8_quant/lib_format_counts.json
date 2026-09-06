@@ -1,0 +1,22 @@
+{
+    "read_files": "[ /mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A11_METRO_E2_ZKRN260013230-1A_23H7NJLT3_L8/A11_METRO_E2_ZKRN260013230-1A_23H7NJLT3_L8_1_out.fq.gz, /mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A11_METRO_E2_ZKRN260013230-1A_23H7NJLT3_L8/A11_METRO_E2_ZKRN260013230-1A_23H7NJLT3_L8_2_out.fq.gz]",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 4762994,
+    "num_assigned_fragments": 4762994,
+    "num_frags_with_concordant_consistent_mappings": 4435083,
+    "num_frags_with_inconsistent_or_orphan_mappings": 346653,
+    "strand_mapping_bias": 0.0012525207486750235,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 5562,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 4435083,
+    "SF": 159483,
+    "SR": 181608,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

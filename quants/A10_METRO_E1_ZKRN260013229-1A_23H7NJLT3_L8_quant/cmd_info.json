@@ -1,0 +1,11 @@
+{
+    "salmon_version": "1.10.3",
+    "index": "DMG2301622_Cdiff_index",
+    "libType": "A",
+    "mates1": "/mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_1_out.fq.gz",
+    "mates2": "/mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/fastq/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_2_out.fq.gz",
+    "threads": "4",
+    "validateMappings": [],
+    "output": "/mnt/c/Users/jsc24/Documents/RNA-seq/OwnTry/quants/A10_METRO_E1_ZKRN260013229-1A_23H7NJLT3_L8_quant",
+    "auxDir": "aux_info"
+}
