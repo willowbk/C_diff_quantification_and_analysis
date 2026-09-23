@@ -17,7 +17,7 @@ import pandas as pd
 import zipfile
 import numpy as np
 
-file_path = ''# Location of index file, Gemomes, quants and fastq folders
+file_path = ''# Location of index file, Genomes, quants and fastq folders
 index_file = 'DMG2301622_Cdiff_ffn_index'
 
 ########################################################

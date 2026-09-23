@@ -8,6 +8,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 
 folder_name = 'SAM_files/'
+stranded = True
 
 # Hard-coded entries for rRNA locus
 locs = [[2971432, 2971537], [2971674, 2974567], [2974834, 2976333], [2976529, 2977107]]
@@ -52,14 +53,20 @@ with open(folder_name + file_name, "r") as f:
 		start_i = max(0, pos - loc[0] - extend)
 		end_i = min(len(reads_1_for), pos - loc[0] + read_len + extend)
 		
-		is_read1 = flag & 64
-		is_read2 = flag & 128
-		is_reverse = flag & 16
+		if stranded:
+			is_read1 = bool(flag & 64)
+			is_read2 = bool(flag & 128)
+			is_reverse = bool(flag & 16)
 
-		if (is_read1 and not is_reverse) or (is_read2 and is_reverse):
-			reads_1_for[start_i:end_i] += scale
+			if (is_read1 and not is_reverse) or (is_read2 and is_reverse):
+				reads_1_for[start_i:end_i] += scale
+			else:
+				reads_1_rev[start_i:end_i] += scale
 		else:
-			reads_1_rev[start_i:end_i] += scale
+			if flag & 16:
+				reads_1_rev[start_i:end_i] += scale
+			else:
+				reads_1_for[start_i:end_i] += scale
 
 
 fig = plt.figure(figsize=(3.5, 2.5))

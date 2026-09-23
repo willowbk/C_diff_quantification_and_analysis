@@ -1,10 +1,29 @@
 # C. difficile Bulk RNA-seq Analysis Pipeline
 
-*This repository contains the software implementation developed by the author. It is currently under active development.*
+This repository contains a Python-based pipeline for the quantification and downstream analysis of bulk RNA-seq data from the *Clostridioides difficile* T6 strain.
+Although the parameters are currently set for this particular T6 strain, the pipeline is designed to be easily adaptable to other bacterial species.
+The files required to run the T6 example, such as the T6 .ffn file and fastq files, are not provided in this repo for data security reasons.
 
-This repository contains a Python-based pipeline for the quantification and downstream analysis of bulk RNA-seq data from *Clostridioides difficile* T6 strain.
-Although the parameters are currently set for the particular T6 strain, the pipeline is designed to be easily adaptable to other bacterial species.
-The file required to run the T6 example, such as the T6 .ffn file and fastq files, are not provided for data security reasons.
+---
+
+## 0. Custom demultiplexing
+
+This section is only necessary when the user has a FastQ containing barcoded reads which still need to be demultiplexed. If that isn't the case,
+you can simply skip to the next section. Otherwise, the following Python script can be used to sort the various reads into separate FastQ files
+from a provided set of barcodes, allowing for single base pair mismatch. *Note that this script was not designed for paired end sequences.*
+An example file (Barcodes_example.xslx) which specifies the barcode sequences has been providied in this repo, and the code
+is currently set based on this fictional example. The barcode sequences can also be directly hard-coded in the script (see comments in the script).
+The FastQ file to be demultiplexed is specified at the start of the script as well. The Python libraries 'matplotlib' and 'tqdm' will both need
+to be installed to run this script. While running, a progress bar will be shown with a remaining time estimate. 
+Once the parameters at the start of the script are updated to match the name of the FastQ file to be demultiplexed, etc. the script can be run via
+
+```bash
+python Demultiplex_reads.py
+```
+
+After this code is complete, the original FastQ file will NOT be automatically deleted, and so it is recommended to remove this file to save disk space.
+For quality control, a series of figures will also be generated to show how many reads were found with each barcode, as well as how many represent single base pair mismatches.
+These figures can be found in the folder Barcode_stats_figures.
 
 ---
 
@@ -116,9 +135,9 @@ Further details for how to assess these quantified results, and perform differen
 
 ## 2. Generation of BAM, wiggle files, reference mapping, and unmapped read characterization 
 
-This next section outlines how to align the reads to a reference genome for further quality control on the reads using `bowtie2`.
-While Salmon is preferred for quantification in bacterial transcriptomics, it does not output any file providing the locations of mapped reads on the reference transcriptome.
-Therefore we turn to `bowtie2` for this. Apart from getting raw counts of mapped reads to the reference, this section also outlines one way to characterize unmapped via Kraken 2.
+This next section outlines how to align the reads to a reference transcriptome for further quality control on the reads using `bowtie2`.
+While Salmon is preferred for quantification in bacterial transcriptomics, it does not output any file providing the locations of mapped reads on the reference.
+Therefore we turn to `bowtie2` for this. Apart from obtaining raw counts of mapped reads, this section also outlines how to characterize unmapped reads via Kraken 2.
 
 ## 2.1 Build reference genome index
 
@@ -146,9 +165,8 @@ bowtie2 -x Genomes/Cdiff_index \
 
 # To get the total number of mapped reads for normalization, run
 samtools view -c -F 4 mapped_reads.bam
-
-# Keep note of this number for later in the pipeline.
 ```
+Keep note of this number for later in the pipeline (section 2.7).
 ## 2.3 Sort and index aligned reads (BAM processing)
 
 Sorting is required so that reads are arranged by their mapping position along the reference genome.
@@ -269,20 +287,21 @@ archaea, viruses, fungi, protozoa, and other eukaryotic sequences, making it sui
 identifying potential contaminants or unexpected organisms in a bacterial RNA-seq dataset.
 
 Once complete (which could take a while), the report should appear in the right panel again.
-Click the eye icon to view which reads mapped to which taxa and at each level.
+Click the eye icon to view which reads mapped to each taxa and at which level.
 
 ## 2.7 Normalizing and plotting the mapped reads
 
-Finally, the mapped reads can be visualized with the following 'Python' script.
-
-*WARNING: This script is hardcoded for the case of a stranded library*
-
-The parameters for which region to visualize are hard-coded at the start. 
-These parameters are currently set for the example rRNA operon region.
+Finally, the mapped reads can be visualized with the following Python script.
+The parameters for which region to visualize are hard-coded at the start,
+and are currently set for the example rRNA operon region. For normalization,
+the library size is also included as a parameter, as well as whether the library is stranded. 
+The library size can be obtained via 'samtools' (section 2.2).
 
 ```bash
 python Plot_read_mappings.py
 ```
+
+Once complete, a read coverage plot will be produced as .pdf.
 
 ---
 
@@ -294,7 +313,7 @@ The next step is to assemble the count matrix. The following Python script will 
 all quantified results in the quants folder and assemble them into a single count table. Before running the
 script, it's first necessary to edit the dictionary file_to_conds at the start of the script 
 so that a human-readable label is provided for each experimental condition corresponding to each abstract file name. 
-If even a single file is found without an entry in this dictionary, the script will report the names of these files and terminate.
+If even a single file is found without an entry in this dictionary, the script will report the names of these missing files and terminate.
 The script will also generate a pdf figure showing the per-biotype quantified reads precentages. Which biotypes will appear in this
 figure, and also separately which will appear in the final count table, are both specified at the start of the script.
 
@@ -307,7 +326,7 @@ as well as a breakdown of the percentages of mapped reads corresponding to each 
 
 ## 3.2 Quantification quality control and normalization
 
-Next to further examine the quality of the quantification results, we turn to TMM (Trimmed Mean of M-values) normalization.
+Next, to further examine the quality of the quantification results, we turn to TMM (Trimmed Mean of M-values) normalization.
 TMM normalization is used to make expression levels comparable between RNA-seq samples by correcting for differences in sequencing depth and relative RNA composition. 
 After normalization, samples from biological replicates should show similar overall expression distributions, while biological differences between conditions can remain. 
 The following script will produce a table with each TMM normalized library as a CSV file based on the count table generated in the previous step (file name specified at the top of the script),
