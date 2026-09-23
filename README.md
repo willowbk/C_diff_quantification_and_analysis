@@ -8,12 +8,12 @@ The files required to run the T6 example, such as the T6 .ffn file and fastq fil
 
 ## 0. Custom demultiplexing
 
-This section is only necessary when the user has a FastQ containing barcoded reads which still need to be demultiplexed. If that isn't the case,
+This section is only necessary when the user has a FastQ file containing barcoded reads which require demultiplexed. If that isn't the case,
 you can simply skip to the next section. Otherwise, the following Python script can be used to sort the various reads into separate FastQ files
 from a provided set of barcodes, allowing for single base pair mismatch. *Note that this script was not designed for paired end sequences.*
 An example file (Barcodes_example.xslx) which specifies the barcode sequences has been providied in this repo, and the code
 is currently set based on this fictional example. The barcode sequences can also be directly hard-coded in the script (see comments in the script).
-The FastQ file to be demultiplexed is specified at the start of the script as well. The Python libraries 'matplotlib' and 'tqdm' will both need
+The FastQ file to be demultiplexed is specified at the start of the script as well. The Python libraries `matplotlib` and `tqdm` will both need
 to be installed to run this script. While running, a progress bar will be shown with a remaining time estimate. 
 Once the parameters at the start of the script are updated to match the name of the FastQ file to be demultiplexed, etc. the script can be run via
 
@@ -21,8 +21,8 @@ Once the parameters at the start of the script are updated to match the name of 
 python Demultiplex_reads.py
 ```
 
-After this code is complete, the original FastQ file will NOT be automatically deleted, and so it is recommended to remove this file to save disk space.
-For quality control, a series of figures will also be generated to show how many reads were found with each barcode, as well as how many represent single base pair mismatches.
+After completion, the original FastQ file will NOT be automatically deleted, and so it is recommended to remove it to save disk space.
+For quality control, a series of figures will also be generated showing how many reads were found with each barcode, as well as how many represent single base pair mismatches.
 These figures can be found in the folder Barcode_stats_figures.
 
 ---
